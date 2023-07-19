@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using Microsoft.VisualBasic;
 
 namespace AkkaWalkThrough
 {
@@ -6,21 +7,22 @@ namespace AkkaWalkThrough
     {
         protected override void OnReceive(object message)
         {
-            var msg = message as string;
-
-            if (string.IsNullOrEmpty(msg))
+            if (message is Messages.InputError)
             {
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine("Please provide the input\n");
-                Console.ResetColor();
-                return;
+                var msg = message as Messages.InputError;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(msg!.Reason);
             }
-
-            bool even = msg.Length % 2 == 0;
-            var color = even ? ConsoleColor.Red : ConsoleColor.Green;
-            Console.ForegroundColor = color;
-            var alert = even ? "Your string had an even # of characters.\n" : "Your string had an odd # of characters.\n";
-            Console.WriteLine(alert);
+            else if (message is Messages.InputSuccess)
+            {
+                var msg = message as Messages.InputSuccess;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(msg!.Reason);
+            }
+            else
+            {
+                Console.WriteLine(message);
+            }
             Console.ResetColor();
         }
     }
