@@ -1,5 +1,4 @@
 ﻿using Akka.Actor;
-using Microsoft.VisualBasic;
 
 namespace AkkaWalkThrough
 {

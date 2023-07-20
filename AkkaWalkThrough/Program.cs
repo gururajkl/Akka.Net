@@ -16,10 +16,10 @@ namespace AkkaWalkThrough
             Props consoleWriterProps = Props.Create<ConsoleWriterActor>();
             IActorRef consoleWriterActor = ActorSystem.ActorOf(consoleWriterProps, "consoleWriterActor");
 
-            Props fileValidatorActorProps = Props.Create(() => new FileValidatorActor(consoleWriterActor, tailCoordinatorActor));
+            Props fileValidatorActorProps = Props.Create(() => new FileValidatorActor(consoleWriterActor));
             IActorRef validationActor = ActorSystem.ActorOf(fileValidatorActorProps, "validationActor");
 
-            Props consoleReaderActorProps = Props.Create<ConsoleReaderActor>(validationActor);
+            Props consoleReaderActorProps = Props.Create<ConsoleReaderActor>();
             IActorRef consoleReaderActor = ActorSystem.ActorOf(consoleReaderActorProps, "consoleReaderActor");
 
             consoleReaderActor.Tell(ConsoleReaderActor.StartCommand);

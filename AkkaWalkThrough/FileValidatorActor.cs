@@ -5,12 +5,10 @@ namespace AkkaWalkThrough
     public class FileValidatorActor : UntypedActor
     {
         private readonly IActorRef? consoleWriterActor;
-        private readonly IActorRef? tailCoordinatorActor;
 
-        public FileValidatorActor(IActorRef? consoleWriterActor, IActorRef? tailCoordinatorActor)
+        public FileValidatorActor(IActorRef? consoleWriterActor)
         {
             this.consoleWriterActor = consoleWriterActor;
-            this.tailCoordinatorActor = tailCoordinatorActor;
         }
 
         protected override void OnReceive(object message)
@@ -28,7 +26,8 @@ namespace AkkaWalkThrough
                 if (valid)
                 {
                     consoleWriterActor.Tell(new Messages.InputSuccess($"Starting processing for {msg}"));
-                    tailCoordinatorActor!.Tell(new TailCoordinatorActor.StartTail(msg, consoleWriterActor!));
+                    Context.ActorSelection("akka://NewActorSystem/user/tailCoordinatorActor")!
+                        .Tell(new TailCoordinatorActor.StartTail(msg, consoleWriterActor!));
                 }
                 else
                 {

@@ -1,6 +1,4 @@
 ﻿using Akka.Actor;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Security.Cryptography;
 
 namespace AkkaWalkThrough
 {
@@ -8,12 +6,6 @@ namespace AkkaWalkThrough
     {
         public const string ExitCommand = "exit";
         public const string StartCommand = "start";
-        private readonly IActorRef validationActor;
-
-        public ConsoleReaderActor(IActorRef validationActor)
-        {
-            this.validationActor = validationActor;
-        }
 
         protected override void OnReceive(object message)
         {
@@ -35,7 +27,7 @@ namespace AkkaWalkThrough
                 return;
             }
 
-            validationActor.Tell(message);
+            Context.ActorSelection("akka://NewActorSystem/user/validationActor").Tell(message);
         }
 
         private void DoPrintInstructions()
