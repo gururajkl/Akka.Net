@@ -40,13 +40,7 @@ namespace AkkaWalkThrough
 
         private void DoPrintInstructions()
         {
-            Console.WriteLine("Write whatever you want into the console!");
-            Console.WriteLine("Type 'exit' to quit this application at any time.\n");
-        }
-
-        private static bool IsValid(string message)
-        {
-            return message.Length % 2 == 0;
+            Console.WriteLine("Please provide the URI of a log file on disk.\n");
         }
     }
 }
