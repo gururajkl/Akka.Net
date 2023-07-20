@@ -10,12 +10,18 @@ namespace AkkaWalkThrough
         {
             ActorSystem = ActorSystem.Create("NewActorSystem");
 
-            IActorRef consoleWriterActor = ActorSystem.ActorOf(Props.Create(() => new ConsoleWriterActor()), "consoleWriterActor");
-            IActorRef consoleReaderActor = ActorSystem.ActorOf(Props.Create(() => new ConsoleReaderActor(consoleWriterActor)), "consoleReaderActor");
+            Props consoleWriterProps = Props.Create<ConsoleWriterActor>();
+            IActorRef consoleWriterActor = ActorSystem.ActorOf(consoleWriterProps, "consoleWriterActor");
+
+            Props validationActorProps = Props.Create(() => new ValidationActor(consoleWriterActor));
+            IActorRef validationActor = ActorSystem.ActorOf(validationActorProps, "validationActor");
+
+            Props consoleReaderActorProps = Props.Create<ConsoleReaderActor>(validationActor);
+            IActorRef consoleReaderActor = ActorSystem.ActorOf(consoleReaderActorProps, "consoleReaderActor");
 
             consoleReaderActor.Tell(ConsoleReaderActor.StartCommand);
 
-            ActorSystem.WhenTerminated.Wait();  
+            ActorSystem.WhenTerminated.Wait();
         }
     }
 }
