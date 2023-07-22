@@ -41,15 +41,18 @@ namespace AkkaWalkThrough
 
         private readonly string filePath;
         private readonly IActorRef reporterActor;
-        private readonly FileObserver observer;
-        private readonly Stream fileStream;
-        private readonly StreamReader fileStreamReader;
+        private FileObserver? observer;
+        private Stream? fileStream;
+        private StreamReader? fileStreamReader;
 
         public TailActor(string filePath, IActorRef reporterActor)
         {
             this.filePath = filePath;
             this.reporterActor = reporterActor;
+        }
 
+        protected override void PreStart()
+        {
             observer = new FileObserver(Self, filePath);
             observer.Start();
 
@@ -64,7 +67,7 @@ namespace AkkaWalkThrough
         {
             if (message is FileWrite)
             {
-                var text = fileStreamReader.ReadToEnd();
+                var text = fileStreamReader!.ReadToEnd();
                 if (!string.IsNullOrEmpty(text))
                 {
                     reporterActor.Tell(text);
@@ -81,6 +84,15 @@ namespace AkkaWalkThrough
                 var ir = message as InitialRead;
                 reporterActor.Tell(ir!.Text);
             }
+        }
+
+        protected override void PostStop()
+        {
+            observer!.Dispose();
+            observer = null;
+            fileStreamReader!.Close();
+            fileStreamReader.Dispose();
+            base.PostStop();
         }
     }
 }
